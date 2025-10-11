@@ -144,6 +144,8 @@ impl Server {
     #[instrument(skip_all, fields(cid = conn_id))]
     fn handle_conn(&self, mut stream: UnixStream, conn_id: usize) -> anyhow::Result<()> {
         // We want to avoid timing out while blocking the main thread.
+        // Note: macOS doesn't support timeouts on Unix domain sockets
+        #[cfg(target_os = "linux")]
         stream
             .set_read_timeout(Some(consts::SOCK_STREAM_TIMEOUT))
             .context("setting read timout on inbound session")?;
@@ -192,6 +194,7 @@ impl Server {
         // worker thread because it is perfectly fine for there to
         // be no new data for long periods of time when the users
         // is connected to a shell session.
+        #[cfg(target_os = "linux")]
         stream.set_read_timeout(None).context("unsetting read timout on inbound session")?;
 
         match header {
@@ -1061,6 +1064,8 @@ fn write_reply<H>(stream: &mut UnixStream, header: H) -> anyhow::Result<()>
 where
     H: serde::Serialize,
 {
+    // Note: macOS doesn't support timeouts on Unix domain sockets
+    #[cfg(target_os = "linux")]
     stream
         .set_write_timeout(Some(consts::SOCK_STREAM_TIMEOUT))
         .context("setting write timout on inbound session")?;
