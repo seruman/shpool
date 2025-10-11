@@ -14,6 +14,7 @@
 
 use std::time;
 
+#[cfg(target_os = "linux")]
 pub const SOCK_STREAM_TIMEOUT: time::Duration = time::Duration::from_millis(200);
 pub const JOIN_POLL_DURATION: time::Duration = time::Duration::from_millis(100);
 
