@@ -230,6 +230,12 @@ pub struct Config {
     /// reattaching to an existing shell.
     pub forward_env: Option<Vec<String>>,
 
+    /// If set to true, forward all environment variables from the environment
+    /// of the initial shell that invoked `shpool attach` to the newly
+    /// launched shell. When this is enabled, the `forward_env` list is ignored.
+    /// Note that this config option has no impact when reattaching to an existing shell.
+    pub forward_entire_env: Option<bool>,
+
     /// The initial path to spawn shell processes with. By default
     /// `/usr/bin:/bin:/usr/sbin:/sbin` (copying openssh). This
     /// value is often overridden by /etc/environment even if you
@@ -304,6 +310,7 @@ impl Config {
             shell: self.shell.or(another.shell),
             env: self.env.or(another.env),
             forward_env: self.forward_env.or(another.forward_env),
+            forward_entire_env: self.forward_entire_env.or(another.forward_entire_env),
             initial_path: self.initial_path.or(another.initial_path),
             session_restore_mode: self.session_restore_mode.or(another.session_restore_mode),
             output_spool_lines: self.output_spool_lines.or(another.output_spool_lines),
