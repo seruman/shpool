@@ -149,3 +149,38 @@ pager program. The pager must accept a file name to display as its first argumen
 on to the actual terminal session. Pager mode is more disruptive than
 dump mode, but it allows shpool to show you the motd even if you have a single
 long running session you keep around for months and continually reattach to.
+
+## Environment Variable Forwarding
+
+By default, `shpool` forwards a minimal set of environment variables from the
+environment where `shpool attach` is invoked to the newly created shell session:
+`TERM`, `DISPLAY`, `LANG`, and `SSH_AUTH_SOCK`. This helps ensure the shell
+environment works correctly without exposing all environment variables.
+
+### Forwarding Specific Variables
+
+You can forward additional specific environment variables by adding them to the
+`forward_env` list in your config file:
+
+```
+forward_env = ["EDITOR", "PAGER", "MY_CUSTOM_VAR"]
+```
+
+Note that this only affects new sessions. When you reattach to an existing
+session, the environment is not modified.
+
+### Forwarding All Variables
+
+If you want to forward your entire environment to new `shpool` sessions, you can
+enable the `forward_entire_env` option:
+
+```
+forward_entire_env = true
+```
+
+When this option is enabled, all environment variables from your current shell
+will be forwarded to the new session, and the `forward_env` list is ignored.
+
+**Warning**: Forwarding your entire environment may expose sensitive information
+like authentication tokens or API keys to the shell session. Use this option
+only if you understand the security implications.

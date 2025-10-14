@@ -122,25 +122,33 @@ fn do_attach(
         }
     };
 
-    let forward_env = config.get().forward_env.clone();
-    let mut local_env_keys = vec!["TERM", "DISPLAY", "LANG", "SSH_AUTH_SOCK"];
-    if let Some(fenv) = &forward_env {
-        for var in fenv.iter() {
-            local_env_keys.push(var);
+    let local_env = if config.get().forward_entire_env.unwrap_or(false) {
+        // Forward all environment variables
+        env::vars().collect::<Vec<_>>()
+    } else {
+        // Forward only specific environment variables
+        let forward_env = config.get().forward_env.clone();
+        let mut local_env_keys = vec!["TERM", "DISPLAY", "LANG", "SSH_AUTH_SOCK"];
+        if let Some(fenv) = &forward_env {
+            for var in fenv.iter() {
+                local_env_keys.push(var);
+            }
         }
-    }
+
+        local_env_keys
+            .into_iter()
+            .filter_map(|var| {
+                let val = env::var(var).context("resolving var").ok()?;
+                Some((String::from(var), val))
+            })
+            .collect::<Vec<_>>()
+    };
 
     client
         .write_connect_header(ConnectHeader::Attach(AttachHeader {
             name: String::from(name),
             local_tty_size: tty_size,
-            local_env: local_env_keys
-                .into_iter()
-                .filter_map(|var| {
-                    let val = env::var(var).context("resolving var").ok()?;
-                    Some((String::from(var), val))
-                })
-                .collect::<Vec<_>>(),
+            local_env,
             ttl_secs: ttl.map(|d| d.as_secs()),
             cmd: cmd.clone(),
         }))
