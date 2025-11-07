@@ -959,7 +959,7 @@ dependencies = [
 [[package]]
 name = "shpool_pty"
 version = "0.3.1"
-source = "git+https://github.com/seruman/shpool_pty?rev=88b85ef#88b85efc431472de589632e037eaf3bf59f40dd5"
+source = "git+https://github.com/seruman/shpool_pty?rev=559aa75#559aa75a7b1347c612aee43aa0174a89d30ba53f"
 dependencies = [
  "errno 0.2.8",
  "libc",

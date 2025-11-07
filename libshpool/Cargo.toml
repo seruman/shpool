@@ -27,7 +27,7 @@ serde_derive = "1" # config parsing, connection header formatting
 toml = "0.8" # config parsing
 byteorder = "1" # endianness
 signal-hook = "0.3" # signal handling
-shpool_pty = { git = "https://github.com/seruman/shpool_pty", rev = "befd3af" } # spawning shells in ptys
+shpool_pty = { git = "https://github.com/seruman/shpool_pty", rev = "559aa75" } # spawning shells in ptys
 lazy_static = "1" # globals
 crossbeam-channel = "0.5" # channels
 libc = "0.2" # basic libc types
